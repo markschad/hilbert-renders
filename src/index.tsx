@@ -22,15 +22,16 @@ const begin = () => {
 		document.getElementById("Universe") as HTMLCanvasElement;
 
 
-	const ORDER = 7;
+	const ORDER = 4;
 	const MAX_INDEX = Math.pow(4, ORDER);
 	const LENGTH = 4 << (ORDER  - 1);
 	const SCALE = 4;
 
-	const grad = gradient(
-		new paper.Color("red"),
-		new paper.Color("blue"),
-		MAX_INDEX + 1
+	const grad = gradient([
+			new paper.Color("red"),
+			new paper.Color("green"),
+			new paper.Color("blue")
+		], MAX_INDEX + 1
 	);
 
 	console.dir(grad);
@@ -58,7 +59,7 @@ const begin = () => {
 	paper.view.onFrame = (event: paper.IFrameEvent) => {
 
 		if (index == MAX_INDEX) {
-			index = 0;
+			return;
 		}
 
 		let now = window.performance.now();
@@ -83,17 +84,17 @@ const begin = () => {
 		let delta = {
 			x: SCALE * (current.x - previous.x),
 			y: SCALE * (current.y - previous.y)
-		}
+		};
 
+		const path = new paper.Path();
 		path.strokeColor = grad[index];
+		path.moveTo(p);
 		p = p.add([ delta.x, delta.y ]);
 		path.lineTo(p);	
 		
 		previous = current;		
 
 	};
-	
-	// paper.view.draw();
 
 }
 
