@@ -6,6 +6,7 @@ import { Universe } from "./components/Universe";
 import * as paper from "paper";
 
 import { hilbert } from "./hilbert";
+import { gradient } from "./gradient";
 
 ReactDOM.render(
 	<Universe/>,
@@ -20,20 +21,29 @@ const begin = () => {
 	const canvas: HTMLCanvasElement = 
 		document.getElementById("Universe") as HTMLCanvasElement;
 
+
+	const ORDER = 7;
+	const MAX_INDEX = Math.pow(4, ORDER);
+	const LENGTH = 4 << (ORDER  - 1);
+	const SCALE = 4;
+
+	const grad = gradient(
+		new paper.Color("red"),
+		new paper.Color("blue"),
+		MAX_INDEX + 1
+	);
+
+	console.dir(grad);
+
+
 	paper.setup(canvas);
 
 	const path = new paper.Path();
 
-	path.strokeColor = "black";
-
 	const START = new paper.Point(24, 48);
 	path.moveTo(START);
 	
-	let p = START;		
-
-	const ORDER = 7;
-	const MAX_INDEX = Math.pow(4, ORDER);
-	const SCALE = 8;
+	let p = START;
 
 	let index = 0;
 	let previous = { x: 0, y: 0 };
@@ -75,6 +85,7 @@ const begin = () => {
 			y: SCALE * (current.y - previous.y)
 		}
 
+		path.strokeColor = grad[index];
 		p = p.add([ delta.x, delta.y ]);
 		path.lineTo(p);	
 		
