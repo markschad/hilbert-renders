@@ -8,6 +8,19 @@ import * as paper from "paper";
 import { hilbert } from "./hilbert";
 import { gradient } from "./gradient";
 
+
+
+
+const getParameterByName = (name: string) => {
+	const url = window.location.href;
+	name = name.replace(/[\[\]]/g, "\\$&");
+	var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			results = regex.exec(url);
+	if (!results) return null;
+	if (!results[2]) return '';
+	return decodeURIComponent(results[2].replace(/\+/g, " "));
+};
+
 ReactDOM.render(
 	<Universe/>,
 	document.getElementById("container")
@@ -21,8 +34,7 @@ const begin = () => {
 	const canvas: HTMLCanvasElement = 
 		document.getElementById("Universe") as HTMLCanvasElement;
 
-
-	const ORDER = 6;
+	const ORDER = Number(getParameterByName("order")) || 6;
 	const MAX_INDEX = Math.pow(4, ORDER);
 	const LENGTH = 4 << (ORDER  - 1);
 	const SCALE = 4;
@@ -33,9 +45,6 @@ const begin = () => {
 			new paper.Color("blue")
 		], MAX_INDEX + 1
 	);
-
-	console.dir(grad);
-
 
 	paper.setup(canvas);
 

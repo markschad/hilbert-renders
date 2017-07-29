@@ -88,11 +88,21 @@ var Universe_1 = __webpack_require__(4);
 var paper = __webpack_require__(1);
 var hilbert_1 = __webpack_require__(5);
 var gradient_1 = __webpack_require__(6);
+var getParameterByName = function (name) {
+    var url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+    if (!results)
+        return null;
+    if (!results[2])
+        return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+};
 ReactDOM.render(React.createElement(Universe_1.Universe, null), document.getElementById("container"));
 // paper.view.viewSize = new paper.Size(1600, 1600);
 var begin = function () {
     var canvas = document.getElementById("Universe");
-    var ORDER = 6;
+    var ORDER = Number(getParameterByName("order")) || 6;
     var MAX_INDEX = Math.pow(4, ORDER);
     var LENGTH = 4 << (ORDER - 1);
     var SCALE = 4;
@@ -101,7 +111,6 @@ var begin = function () {
         new paper.Color("green"),
         new paper.Color("blue")
     ], MAX_INDEX + 1);
-    console.dir(grad);
     paper.setup(canvas);
     var path = new paper.Path();
     var START = new paper.Point(24, 48);
