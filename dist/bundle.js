@@ -92,7 +92,7 @@ ReactDOM.render(React.createElement(Universe_1.Universe, null), document.getElem
 // paper.view.viewSize = new paper.Size(1600, 1600);
 var begin = function () {
     var canvas = document.getElementById("Universe");
-    var ORDER = 4;
+    var ORDER = 6;
     var MAX_INDEX = Math.pow(4, ORDER);
     var LENGTH = 4 << (ORDER - 1);
     var SCALE = 4;
@@ -278,7 +278,6 @@ exports.gradient = function (stops, steps) {
     var stepsPerStop = steps / deltas.length;
     for (var i = 1; i < steps; i++) {
         var d = Math.floor(i / stepsPerStop);
-        //console.log("i: " + i, " d: " + d);
         g.push(new paper.Color(g[i - 1].red + (deltas[d].r / stepsPerStop), g[i - 1].green + (deltas[d].g / stepsPerStop), g[i - 1].blue + (deltas[d].b / stepsPerStop)));
         var g0 = g[g.length - 1];
     }

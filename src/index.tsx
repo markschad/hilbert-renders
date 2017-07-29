@@ -22,7 +22,7 @@ const begin = () => {
 		document.getElementById("Universe") as HTMLCanvasElement;
 
 
-	const ORDER = 4;
+	const ORDER = 6;
 	const MAX_INDEX = Math.pow(4, ORDER);
 	const LENGTH = 4 << (ORDER  - 1);
 	const SCALE = 4;

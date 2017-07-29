@@ -47,8 +47,6 @@ export const gradient = (stops: paper.Color[], steps: number): paper.Color[] => 
 
 		let d = Math.floor(i / stepsPerStop);
 
-		//console.log("i: " + i, " d: " + d);
-
 		g.push(new paper.Color(
 			g[i - 1].red + (deltas[d].r / stepsPerStop),
 			g[i - 1].green + (deltas[d].g / stepsPerStop),

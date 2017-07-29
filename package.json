@@ -7,7 +7,12 @@
     "test": "ts-node ./node_modules/tape/bin/tape ./src/hilbert.spec.ts",
     "dev": "webpack-dev-server --inline",
     "predev": "npm run build",
-    "build": "webpack"
+    "build": "npm run vendor && webpack",
+    "vendor": "npm run vendor:react && npm run vendor:react-dom && npm run vendor:paper",
+    "vendor:react": "cp ./node_modules/react/dist/react.js ./dist/vendor/react.js",
+    "vendor:react-dom": "cp ./node_modules/react-dom/dist/react-dom.js ./dist/vendor/react-dom.js",
+    "vendor:paper": "cp ./node_modules/paper/dist/paper-full.min.js ./dist/vendor/paper.js",
+    "prevendor": "mkdir -p ./dist/vendor"
   },
   "keywords": [],
   "author": "",
