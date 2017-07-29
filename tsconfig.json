@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist/",
+		"sourceMap": true,
+		"noImplicitAny": true,
+		"module": "commonjs",
+		"target": "es5",
+		"jsx": "react",
+		"types": [
+			"tape",
+			"paper"
+		],
+		"typeRoots": [
+			"./node_modules/@types"
+		]
+	},
+	"include": [
+		"./src/**/*.ts"
+	],
+	"exclude": [
+		"./src/**/*.spec.ts"
+	]
+}
