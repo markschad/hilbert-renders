@@ -34,12 +34,12 @@ export const renderHilbert = (canvas: HTMLCanvasElement, order: number) => {
 		// 	Math.floor(255 * colour.r).toString(16) +
 		// 	Math.floor(255 * colour.g).toString(16) +
 		// 	Math.floor(255 * colour.b).toString(16);		
-		let colourStr = "rgba(" + 
+		let colourStr = "rgb(" + 
 			Math.floor(255 * colour.r) + ", " +
 			Math.floor(255 * colour.g) + ", " +
-			Math.floor(255 * colour.b) + ", 0)";
+			Math.floor(255 * colour.b) + ")";
 		ctx.strokeStyle = colourStr;
-		ctx.lineWidth = 1;
+		ctx.lineWidth = 2;
 		ctx.stroke();
 
 		// Retrieve the next part.
