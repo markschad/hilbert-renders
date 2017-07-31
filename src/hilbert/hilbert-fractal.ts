@@ -20,14 +20,18 @@ export interface HilbertPart {
 export const NextHilbertPart: Fractal<HilbertPart> = (p: HilbertPart) => {
 
 	let index_prime = p.index + 1;
-	let current_prime = hilbert(index_prime, p.order);
-	return {
-		order: p.order,
-		index: index_prime,
-		previous: { x: p.current.x, y: p.current.y },
-		current: current_prime
+	if (index_prime < Math.pow(4, p.order)) {
+		let current_prime = hilbert(index_prime, p.order);
+		return {
+			order: p.order,
+			index: index_prime,
+			previous: { x: p.current.x, y: p.current.y },
+			current: current_prime
+		}
 	}
-
+	else {
+		return null;
+	}
 }
 
 /**
