@@ -16,7 +16,7 @@ export const hilbert = (index: number, order: number): { x: number, y: number } 
 	// console.log("{"+index+","+order+"} max_index: "+max_index);
 
 	if (index > max_index) {
-		throw "Err: index must be less than the maximum index (" + max_index + ") of an order " + order + " cruve."
+		throw "Err: index (" + index + ") must be less than the maximum index (" + max_index + ") of an order " + order + " cruve."
 	}
 
 	// Return trivial curves for order 0,1 hilbert curves.

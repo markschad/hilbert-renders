@@ -31,9 +31,9 @@ export const renderHilbert = (canvas: HTMLCanvasElement, order: number) => {
 		// Set the line colour.
 		let colour = colourMap[h.index];
 		let colourStr = "rgb(" + 
-			255 * colour.r + "," +
-			255 * colour.g + "," +
-			255 * colour.b +")";
+			Math.floor(255 * colour.r) + "," +
+			Math.floor(255 * colour.g) + "," +
+			Math.floor(255 * colour.b) +")";
 		ctx.strokeStyle = colourStr;
 		ctx.lineWidth = 2;
 
