@@ -72,3 +72,28 @@ export const hilbert = (index: number, order: number): { x: number, y: number } 
 	}
 
 }
+
+
+export class Hilbert {
+
+
+	static IndexToPoint(index: number, order: number): { x: number, y: number } {
+		return hilbert(index, order);
+	}
+
+
+	static PointToIndex(x: number, y: number, order: number): number {
+
+		const order_prime = order - 1;
+		const max_index = Math.pow(4, order);
+		const area = Math.pow(4, order_prime);
+		const offset = Math.pow(2, order_prime);
+
+		return 0;
+
+	}
+
+
+
+}
+

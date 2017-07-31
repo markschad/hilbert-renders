@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/dist";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,23 +71,15 @@ module.exports = React;
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-module.exports = paper;
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-var ReactDOM = __webpack_require__(3);
-var Universe_1 = __webpack_require__(4);
-var paper = __webpack_require__(1);
-var hilbert_1 = __webpack_require__(5);
-var gradient_1 = __webpack_require__(6);
+var ReactDOM = __webpack_require__(2);
+var Universe_1 = __webpack_require__(3);
+var render_1 = __webpack_require__(4);
 var getParameterByName = function (name) {
     var url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");
@@ -98,61 +90,20 @@ var getParameterByName = function (name) {
         return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 };
-ReactDOM.render(React.createElement(Universe_1.Universe, null), document.getElementById("container"));
-// paper.view.viewSize = new paper.Size(1600, 1600);
 var begin = function () {
     var canvas = document.getElementById("Universe");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    // Black background.
+    // const ctx = canvas.getContext("2d");
+    // ctx.fillStyle = "#000";
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
     var ORDER = Number(getParameterByName("order")) || 6;
-    var MAX_INDEX = Math.pow(4, ORDER);
-    var LENGTH = 4 << (ORDER - 1);
-    var SCALE = 4;
-    var grad = gradient_1.gradient([
-        new paper.Color("red"),
-        new paper.Color("green"),
-        new paper.Color("blue")
-    ], MAX_INDEX + 1);
-    paper.setup(canvas);
-    var path = new paper.Path();
-    var START = new paper.Point(24, 48);
-    path.moveTo(START);
-    var p = START;
-    var index = 0;
-    var previous = { x: 0, y: 0 };
-    var pointText = new paper.PointText(new paper.Point(8, 12));
-    var avgFps = 0;
-    var totalFps = 0;
-    var countFps = 0;
-    var frameTime = 0;
-    paper.view.onFrame = function (event) {
-        if (index == MAX_INDEX) {
-            return;
-        }
-        var now = window.performance.now();
-        totalFps += 1 / event.delta;
-        countFps++;
-        frameTime += event.delta;
-        if (frameTime > 1) {
-            avgFps = Math.floor(totalFps / countFps);
-            totalFps = 0;
-            countFps = 0;
-            frameTime = 0;
-        }
-        pointText.content =
-            "index: " + index + "\n" +
-                "fps: " + avgFps;
-        var current = hilbert_1.hilbert(index++, ORDER);
-        var delta = {
-            x: SCALE * (current.x - previous.x),
-            y: SCALE * (current.y - previous.y)
-        };
-        var path = new paper.Path();
-        path.strokeColor = grad[index];
-        path.moveTo(p);
-        p = p.add([delta.x, delta.y]);
-        path.lineTo(p);
-        previous = current;
-    };
+    render_1.renderHilbert(canvas, ORDER);
 };
+// Inject the universe.
+ReactDOM.render(React.createElement(Universe_1.Universe, null), document.getElementById("container"));
+// Animate it.
 console.log(document.readyState);
 if (document.readyState === "interactive") {
     begin();
@@ -163,13 +114,13 @@ else {
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = ReactDOM;
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -182,7 +133,87 @@ exports.Universe = function () {
 
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var hilbert_fractal_1 = __webpack_require__(5);
+var gradient_1 = __webpack_require__(7);
+var OFFSET = { x: 24, y: 48 };
+var SCALE = 3;
+exports.renderHilbert = function (canvas, order) {
+    var ctx = canvas.getContext("2d");
+    var h = hilbert_fractal_1.FirstHilbertPart(order);
+    // Build the array of colours which smoothly transition from red to green to blue.
+    var colourMap = gradient_1.gradient_a([
+        { r: 1, g: 0, b: 0 },
+        { r: 0, g: 1, b: 0 },
+        { r: 0, g: 0, b: 1 }
+    ], Math.pow(4, order));
+    var _render = function () {
+        // Set the line path.
+        ctx.beginPath();
+        ctx.moveTo(OFFSET.x + h.previous.x * SCALE, OFFSET.y + h.previous.y * SCALE);
+        ctx.lineTo(OFFSET.x + h.current.x * SCALE, OFFSET.y + h.current.y * SCALE);
+        // Set the line colour.
+        var colour = colourMap[h.index];
+        var colourStr = "rgb(" +
+            255 * colour.r + "," +
+            255 * colour.g + "," +
+            255 * colour.b + ")";
+        ctx.strokeStyle = colourStr;
+        ctx.stroke();
+        // Retrieve the next part.
+        h = hilbert_fractal_1.NextHilbertPart(h);
+        if (h) {
+            // And draw it in the next frame if there is another part.
+            window.requestAnimationFrame(_render);
+        }
+    };
+    window.requestAnimationFrame(_render);
+};
+
+
+/***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var hilbert_1 = __webpack_require__(6);
+/**
+ * Returns an object representing the next part of a pseudo-Hilbert curve, given some other part.
+ * @param p Some part of a pseudo-Hilbert curve.
+ */
+exports.NextHilbertPart = function (p) {
+    var index_prime = p.index + 1;
+    var current_prime = hilbert_1.hilbert(index_prime, p.order);
+    return {
+        order: p.order,
+        index: index_prime,
+        previous: { x: p.current.x, y: p.current.y },
+        current: current_prime
+    };
+};
+/**
+ * Returns an object representing the first part of a pseudo-Hilbert curve of the given order.
+ * @param order The order of the desired pseudo-Hilbert curve.
+ */
+exports.FirstHilbertPart = function (order) {
+    return {
+        order: order,
+        index: 1,
+        previous: { x: 0, y: 0 },
+        current: hilbert_1.hilbert(1, order)
+    };
+};
+
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -250,16 +281,32 @@ exports.hilbert = function (index, order) {
         };
     }
 };
+var Hilbert = (function () {
+    function Hilbert() {
+    }
+    Hilbert.IndexToPoint = function (index, order) {
+        return exports.hilbert(index, order);
+    };
+    Hilbert.PointToIndex = function (x, y, order) {
+        var order_prime = order - 1;
+        var max_index = Math.pow(4, order);
+        var area = Math.pow(4, order_prime);
+        var offset = Math.pow(2, order_prime);
+        return 0;
+    };
+    return Hilbert;
+}());
+exports.Hilbert = Hilbert;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var paper = __webpack_require__(1);
+var paper = __webpack_require__(8);
 exports.gradient2 = function (c0, c1, steps) {
     var g = [];
     var delta = {
@@ -292,7 +339,37 @@ exports.gradient = function (stops, steps) {
     }
     return g;
 };
+;
+exports.gradient_a = function (stops, steps) {
+    var numStops = stops.length;
+    var deltas = [];
+    var g = [stops[0]];
+    for (var i = 1; i < numStops; i++) {
+        deltas.push({
+            r: stops[i].r - stops[i - 1].r,
+            g: stops[i].g - stops[i - 1].g,
+            b: stops[i].b - stops[i - 1].b
+        });
+    }
+    var stepsPerStop = steps / deltas.length;
+    for (var i = 1; i < steps; i++) {
+        var d = Math.floor(i / stepsPerStop);
+        g.push({
+            r: g[i - 1].r + (deltas[d].r / stepsPerStop),
+            g: g[i - 1].g + (deltas[d].g / stepsPerStop),
+            b: g[i - 1].b + (deltas[d].b / stepsPerStop)
+        });
+        var g0 = g[g.length - 1];
+    }
+    return g;
+};
 
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+module.exports = paper;
 
 /***/ })
 /******/ ]);

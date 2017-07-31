@@ -8,10 +8,9 @@
     "dev": "webpack-dev-server --inline",
     "predev": "npm run build",
     "build": "npm run vendor && webpack",
-    "vendor": "npm run vendor:react && npm run vendor:react-dom && npm run vendor:paper",
+    "vendor": "npm run vendor:react && npm run vendor:react-dom",
     "vendor:react": "cp ./node_modules/react/dist/react.js ./dist/vendor/react.js",
     "vendor:react-dom": "cp ./node_modules/react-dom/dist/react-dom.js ./dist/vendor/react-dom.js",
-    "vendor:paper": "cp ./node_modules/paper/dist/paper-full.min.js ./dist/vendor/paper.js",
     "prevendor": "mkdir -p ./dist/vendor"
   },
   "keywords": [],
@@ -20,12 +19,10 @@
   "dependencies": {
     "@types/react": "^15.0.38",
     "@types/react-dom": "^15.5.1",
-    "paper": "^0.11.4",
     "react": "^15.6.1",
     "react-dom": "^15.6.1"
   },
   "devDependencies": {
-    "@types/paper": "^0.9.5",
     "@types/tape": "^4.2.30",
     "awesome-typescript-loader": "^3.2.1",
     "concurrently": "^3.5.0",
