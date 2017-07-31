@@ -35,9 +35,6 @@ ReactDOM.render(
 	document.getElementById("container")
 );
 
-// Animate it.
-console.log(document.readyState);
-
 if (document.readyState === "interactive") {
 	begin();
 } else {

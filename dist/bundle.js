@@ -99,8 +99,6 @@ var begin = function () {
 };
 // Inject the universe.
 ReactDOM.render(React.createElement(Universe_1.Universe, null), document.getElementById("container"));
-// Animate it.
-console.log(document.readyState);
 if (document.readyState === "interactive") {
     begin();
 }
@@ -187,13 +185,18 @@ var hilbert_1 = __webpack_require__(6);
  */
 exports.NextHilbertPart = function (p) {
     var index_prime = p.index + 1;
-    var current_prime = hilbert_1.hilbert(index_prime, p.order);
-    return {
-        order: p.order,
-        index: index_prime,
-        previous: { x: p.current.x, y: p.current.y },
-        current: current_prime
-    };
+    if (index_prime < Math.pow(4, p.order)) {
+        var current_prime = hilbert_1.hilbert(index_prime, p.order);
+        return {
+            order: p.order,
+            index: index_prime,
+            previous: { x: p.current.x, y: p.current.y },
+            current: current_prime
+        };
+    }
+    else {
+        return null;
+    }
 };
 /**
  * Returns an object representing the first part of a pseudo-Hilbert curve of the given order.
