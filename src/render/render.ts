@@ -2,7 +2,7 @@ import {
 	FirstHilbertPart,
 	NextHilbertPart
 } from "../hilbert/hilbert-fractal";
-import { gradient_a } from "../gradient";
+import { gradient } from "../gradient";
 
 
 const OFFSET = { x: 4, y: 4 };
@@ -15,7 +15,7 @@ export const renderHilbert = (canvas: HTMLCanvasElement, order: number) => {
 	let h = FirstHilbertPart(order);
 
 	// Build the array of colours which smoothly transition from red to green to blue.
-	let colourMap = gradient_a([
+	let colourMap = gradient([
 		{ r: 1, g: 0, b: 0 },
 		{ r: 0, g: 1, b: 0 },
 		{ r: 0, g: 0, b: 1 }

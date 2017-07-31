@@ -94,10 +94,6 @@ var begin = function () {
     var canvas = document.getElementById("Universe");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    // Black background.
-    // const ctx = canvas.getContext("2d");
-    // ctx.fillStyle = "#000";
-    // ctx.fillRect(0, 0, canvas.width, canvas.height);
     var ORDER = Number(getParameterByName("order")) || 6;
     render_1.renderHilbert(canvas, ORDER);
 };
@@ -141,13 +137,13 @@ exports.Universe = function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var hilbert_fractal_1 = __webpack_require__(5);
 var gradient_1 = __webpack_require__(7);
-var OFFSET = { x: 24, y: 48 };
+var OFFSET = { x: 4, y: 4 };
 var SCALE = 3;
 exports.renderHilbert = function (canvas, order) {
     var ctx = canvas.getContext("2d");
     var h = hilbert_fractal_1.FirstHilbertPart(order);
     // Build the array of colours which smoothly transition from red to green to blue.
-    var colourMap = gradient_1.gradient_a([
+    var colourMap = gradient_1.gradient([
         { r: 1, g: 0, b: 0 },
         { r: 0, g: 1, b: 0 },
         { r: 0, g: 0, b: 1 }
@@ -164,6 +160,7 @@ exports.renderHilbert = function (canvas, order) {
             255 * colour.g + "," +
             255 * colour.b + ")";
         ctx.strokeStyle = colourStr;
+        ctx.lineWidth = 2;
         ctx.stroke();
         // Retrieve the next part.
         h = hilbert_fractal_1.NextHilbertPart(h);
@@ -306,41 +303,8 @@ exports.Hilbert = Hilbert;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var paper = __webpack_require__(8);
-exports.gradient2 = function (c0, c1, steps) {
-    var g = [];
-    var delta = {
-        r: c1.red - c0.red,
-        g: c1.green - c0.green,
-        b: c1.blue - c0.blue
-    };
-    g.push(c0);
-    for (var i = 1; i < steps; i++) {
-        g.push(new paper.Color(g[i - 1].red + (delta.r / steps), g[i - 1].green + (delta.g / steps), g[i - 1].blue + (delta.b / steps)));
-    }
-    return g;
-};
-exports.gradient = function (stops, steps) {
-    var numStops = stops.length;
-    var deltas = [];
-    var g = [stops[0]];
-    for (var i = 1; i < numStops; i++) {
-        deltas.push({
-            r: stops[i].red - stops[i - 1].red,
-            g: stops[i].green - stops[i - 1].green,
-            b: stops[i].blue - stops[i - 1].blue
-        });
-    }
-    var stepsPerStop = steps / deltas.length;
-    for (var i = 1; i < steps; i++) {
-        var d = Math.floor(i / stepsPerStop);
-        g.push(new paper.Color(g[i - 1].red + (deltas[d].r / stepsPerStop), g[i - 1].green + (deltas[d].g / stepsPerStop), g[i - 1].blue + (deltas[d].b / stepsPerStop)));
-        var g0 = g[g.length - 1];
-    }
-    return g;
-};
 ;
-exports.gradient_a = function (stops, steps) {
+exports.gradient = function (stops, steps) {
     var numStops = stops.length;
     var deltas = [];
     var g = [stops[0]];
@@ -364,12 +328,6 @@ exports.gradient_a = function (stops, steps) {
     return g;
 };
 
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-module.exports = paper;
 
 /***/ })
 /******/ ]);

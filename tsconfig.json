@@ -7,8 +7,7 @@
 		"target": "es5",
 		"jsx": "react",
 		"types": [
-			"tape",
-			"paper"
+			"tape"
 		],
 		"typeRoots": [
 			"./node_modules/@types"
