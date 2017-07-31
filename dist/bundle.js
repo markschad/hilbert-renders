@@ -153,10 +153,14 @@ exports.renderHilbert = function (canvas, order) {
         ctx.lineTo(OFFSET.x + h.current.x * SCALE, OFFSET.y + h.current.y * SCALE);
         // Set the line colour.
         var colour = colourMap[h.index];
-        var colourStr = "rgb(" +
-            255 * colour.r + "," +
-            255 * colour.g + "," +
-            255 * colour.b + ")";
+        var colourStr = "#" +
+            Math.floor(255 * colour.r).toString(16) +
+            Math.floor(255 * colour.g).toString(16) +
+            Math.floor(255 * colour.b).toString(16);
+        // "rgb(" + 
+        // 	Math.floor(255 * colour.r) + ", " +
+        // 	Math.floor(255 * colour.g) + ", " +
+        // 	Math.floor(255 * colour.b) +")";
         ctx.strokeStyle = colourStr;
         ctx.lineWidth = 2;
         ctx.stroke();
@@ -231,7 +235,7 @@ exports.hilbert = function (index, order) {
     // console.log("{"+index+","+order+"} area: "+area);
     // console.log("{"+index+","+order+"} max_index: "+max_index);
     if (index > max_index) {
-        throw "Err: index must be less than the maximum index (" + max_index + ") of an order " + order + " cruve.";
+        throw "Err: index (" + index + ") must be less than the maximum index (" + max_index + ") of an order " + order + " cruve.";
     }
     // Return trivial curves for order 0,1 hilbert curves.
     if (order === 0) {
