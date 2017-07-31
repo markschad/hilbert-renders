@@ -95,11 +95,12 @@ var begin = function () {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     var max_order = Number(getParameterByName("order")) || 6;
+    var scale = 3;
     var margin = 4;
     var y = margin;
-    for (var order = 0; order < max_order; order++) {
-        render_1.renderHilbert(canvas, order, { x: margin, y: y }, 3);
-        var height = Math.pow(2, order - 1);
+    for (var order = 1; order < max_order; order++) {
+        render_1.renderHilbert(canvas, order, { x: margin, y: y }, scale);
+        var height = scale * Math.pow(2, order);
         y += height + margin;
     }
 };
@@ -142,8 +143,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var hilbert_fractal_1 = __webpack_require__(5);
 var gradient_1 = __webpack_require__(7);
 ;
-var OFFSET = { x: 4, y: 4 };
-var SCALE = 3;
 exports.renderHilbert = function (canvas, order, offset, scale) {
     var ctx = canvas.getContext("2d");
     var h = hilbert_fractal_1.FirstHilbertPart(order);
