@@ -27,9 +27,9 @@ export const gradient = (stops: Color[], steps: number): Color[] => {
 		let d = Math.floor(i / stepsPerStop);
 
 		g.push({
-			r: g[i - 1].r + (deltas[d].r / stepsPerStop),
-			g: g[i - 1].g + (deltas[d].g / stepsPerStop),
-			b: g[i - 1].b + (deltas[d].b / stepsPerStop)
+			r: Math.max(0, Math.min(1, g[i - 1].r + (deltas[d].r / stepsPerStop))),
+			g: Math.max(0, Math.min(1, g[i - 1].g + (deltas[d].g / stepsPerStop))),
+			b: Math.max(0, Math.min(1, g[i - 1].b + (deltas[d].b / stepsPerStop)))
 		});
 
 		let g0 = g[g.length - 1];

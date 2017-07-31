@@ -153,14 +153,14 @@ exports.renderHilbert = function (canvas, order) {
         ctx.lineTo(OFFSET.x + h.current.x * SCALE, OFFSET.y + h.current.y * SCALE);
         // Set the line colour.
         var colour = colourMap[h.index];
-        var colourStr = "#" +
-            Math.floor(255 * colour.r).toString(16) +
-            Math.floor(255 * colour.g).toString(16) +
-            Math.floor(255 * colour.b).toString(16);
-        // "rgb(" + 
-        // 	Math.floor(255 * colour.r) + ", " +
-        // 	Math.floor(255 * colour.g) + ", " +
-        // 	Math.floor(255 * colour.b) +")";
+        // let colourStr = "#" +
+        // 	Math.floor(255 * colour.r).toString(16) +
+        // 	Math.floor(255 * colour.g).toString(16) +
+        // 	Math.floor(255 * colour.b).toString(16);		
+        var colourStr = "rgb(" +
+            Math.floor(255 * colour.r) + ", " +
+            Math.floor(255 * colour.g) + ", " +
+            Math.floor(255 * colour.b) + ")";
         ctx.strokeStyle = colourStr;
         ctx.lineWidth = 2;
         ctx.stroke();
@@ -326,9 +326,9 @@ exports.gradient = function (stops, steps) {
     for (var i = 1; i < steps; i++) {
         var d = Math.floor(i / stepsPerStop);
         g.push({
-            r: g[i - 1].r + (deltas[d].r / stepsPerStop),
-            g: g[i - 1].g + (deltas[d].g / stepsPerStop),
-            b: g[i - 1].b + (deltas[d].b / stepsPerStop)
+            r: Math.max(0, Math.min(255, g[i - 1].r + (deltas[d].r / stepsPerStop))),
+            g: Math.max(0, Math.min(255, g[i - 1].g + (deltas[d].g / stepsPerStop))),
+            b: Math.max(0, Math.min(255, g[i - 1].b + (deltas[d].b / stepsPerStop)))
         });
         var g0 = g[g.length - 1];
     }
