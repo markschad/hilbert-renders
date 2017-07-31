@@ -5,10 +5,10 @@ import {
 import { gradient } from "../gradient";
 
 
-const OFFSET = { x: 4, y: 4 };
-const SCALE = 3;
+interface Point { x: number, y: number };
 
-export const renderHilbert = (canvas: HTMLCanvasElement, order: number) => {
+export const renderHilbert = (canvas: HTMLCanvasElement, 
+	order: number, offset: Point, scale: number) => {
 
 	const ctx = canvas.getContext("2d");
 
@@ -25,8 +25,8 @@ export const renderHilbert = (canvas: HTMLCanvasElement, order: number) => {
 
 		// Set the line path.
 		ctx.beginPath();
-		ctx.moveTo(OFFSET.x + h.previous.x * SCALE, OFFSET.y + h.previous.y * SCALE);
-		ctx.lineTo(OFFSET.x + h.current.x * SCALE, OFFSET.y + h.current.y * SCALE);
+		ctx.moveTo(offset.x + h.previous.x * scale, offset.y + h.previous.y * scale);
+		ctx.lineTo(offset.x + h.current.x * scale, offset.y + h.current.y * scale);
 
 		// Set the line colour.
 		let colour = colourMap[h.index];

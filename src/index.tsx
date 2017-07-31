@@ -23,9 +23,20 @@ const begin = () => {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 
-	const ORDER = Number(getParameterByName("order")) || 6;
+	const max_order = Number(getParameterByName("order")) || 6;
 
-	renderHilbert(canvas, ORDER);
+	const scale = 3;
+	const margin = 4;
+	let y = margin;
+
+	for (let order = 1; order < max_order; order++) {
+
+		renderHilbert(canvas, order, { x: margin, y: y}, scale);
+
+		let height = scale * Math.pow(2, order);
+		y += height + margin;
+
+	}
 
 }
 
@@ -40,5 +51,3 @@ if (document.readyState === "interactive") {
 } else {
 	window.onload = begin;
 }
-
-

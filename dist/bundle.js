@@ -94,8 +94,14 @@ var begin = function () {
     var canvas = document.getElementById("Universe");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    var ORDER = Number(getParameterByName("order")) || 6;
-    render_1.renderHilbert(canvas, ORDER);
+    var max_order = Number(getParameterByName("order")) || 6;
+    var margin = 4;
+    var y = margin;
+    for (var order = 0; order < max_order; order++) {
+        render_1.renderHilbert(canvas, order, { x: margin, y: y }, 3);
+        var height = Math.pow(2, order - 1);
+        y += height + margin;
+    }
 };
 // Inject the universe.
 ReactDOM.render(React.createElement(Universe_1.Universe, null), document.getElementById("container"));
@@ -135,9 +141,10 @@ exports.Universe = function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var hilbert_fractal_1 = __webpack_require__(5);
 var gradient_1 = __webpack_require__(7);
+;
 var OFFSET = { x: 4, y: 4 };
 var SCALE = 3;
-exports.renderHilbert = function (canvas, order) {
+exports.renderHilbert = function (canvas, order, offset, scale) {
     var ctx = canvas.getContext("2d");
     var h = hilbert_fractal_1.FirstHilbertPart(order);
     // Build the array of colours which smoothly transition from red to green to blue.
@@ -149,8 +156,8 @@ exports.renderHilbert = function (canvas, order) {
     var _render = function () {
         // Set the line path.
         ctx.beginPath();
-        ctx.moveTo(OFFSET.x + h.previous.x * SCALE, OFFSET.y + h.previous.y * SCALE);
-        ctx.lineTo(OFFSET.x + h.current.x * SCALE, OFFSET.y + h.current.y * SCALE);
+        ctx.moveTo(offset.x + h.previous.x * scale, offset.y + h.previous.y * scale);
+        ctx.lineTo(offset.x + h.current.x * scale, offset.y + h.current.y * scale);
         // Set the line colour.
         var colour = colourMap[h.index];
         // let colourStr = "#" +
@@ -326,9 +333,9 @@ exports.gradient = function (stops, steps) {
     for (var i = 1; i < steps; i++) {
         var d = Math.floor(i / stepsPerStop);
         g.push({
-            r: Math.max(0, Math.min(255, g[i - 1].r + (deltas[d].r / stepsPerStop))),
-            g: Math.max(0, Math.min(255, g[i - 1].g + (deltas[d].g / stepsPerStop))),
-            b: Math.max(0, Math.min(255, g[i - 1].b + (deltas[d].b / stepsPerStop)))
+            r: Math.max(0, Math.min(1, g[i - 1].r + (deltas[d].r / stepsPerStop))),
+            g: Math.max(0, Math.min(1, g[i - 1].g + (deltas[d].g / stepsPerStop))),
+            b: Math.max(0, Math.min(1, g[i - 1].b + (deltas[d].b / stepsPerStop)))
         });
         var g0 = g[g.length - 1];
     }
