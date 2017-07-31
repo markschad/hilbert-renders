@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 
 import { Universe } from "./components/Universe";
 
-import { renderHilbert } from "./render/render";
+import { renderHilbert } from "./render/render-poly";
 
 const getParameterByName = (name: string) => {
 	const url = window.location.href;
@@ -27,16 +27,24 @@ const begin = () => {
 
 	const scale = 3;
 	const margin = 4;
-	let y = margin;
 
-	for (let order = 1; order < max_order; order++) {
+	renderHilbert(canvas, max_order, { x: margin, y: margin }, scale);
 
-		renderHilbert(canvas, order, { x: margin, y: y}, scale);
+	// let y = margin;
 
-		let height = scale * Math.pow(2, order);
-		y += height + margin;
+	// for (let order = 1; order < max_order; order++) {
 
-	}
+	// 	let length = scale * Math.pow(2, order);
+	// 	let x = margin;
+
+	// 	while (x + length < canvas.width) {
+	// 		renderHilbert(canvas, order, { x: x, y: y}, scale);
+	// 		x += length + margin;
+	// 	}
+
+	// 	y += length + margin;
+
+	// }
 
 }
 
