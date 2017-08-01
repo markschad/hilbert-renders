@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "ts-node ./node_modules/tape/bin/tape ./src/hilbert.spec.ts",
+    "test": "ts-node ./node_modules/tape/bin/tape ./src/**/*.spec.ts -R min",
     "dev": "webpack-dev-server --inline",
     "predev": "npm run build",
     "build": "npm run vendor && webpack",

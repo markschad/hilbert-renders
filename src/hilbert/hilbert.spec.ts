@@ -1,6 +1,6 @@
 import * as test from "tape";
 
-import { hilbert } from "./hilbert";
+import { hilbert, Hilbert as H } from "./hilbert";
 
 
 const fixtures = [
@@ -113,7 +113,7 @@ for (let i = 0; i < num_tests; i++) {
 	const f = fixtures[i];
 	const order = f.order;
 
-	test("hilbert curve, order: " + f.order, (t) => {
+	test("hilbert (index -> x,y), order: " + f.order, (t) => {
 
 		let num_indices = f.expected.length;
 
@@ -123,6 +123,24 @@ for (let i = 0; i < num_tests; i++) {
 
 				const exp = f.expected[j];
 				ti.deepEqual(hilbert(j, order), exp);
+				ti.end();
+
+			});		
+
+		}
+
+	});
+
+	test ("hilbert (x,y -> index), order: " + f.order, (t) => {
+
+		let num_indices = f.expected.length;
+
+		for (let j = 0; j < num_indices; j++) {
+
+			t.test("index: " + j, (ti) => {
+
+				const exp = f.expected[j];
+				ti.deepEqual(H.PointToIndex(exp.x, exp.y, order), j);
 				ti.end();
 
 			});		

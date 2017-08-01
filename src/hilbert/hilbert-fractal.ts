@@ -69,6 +69,20 @@ export const FirstHilbertPart = (order: number) => {
 }
 
 /**
+ * Returns an object representing the last part of a pseudo-Hilbert curve of the given order.
+ * @param order The order of the desired pseudo-Hilbert curve.
+ */
+export const LastHilbertPart = (order: number) => {
+	const last_index = Math.pow(4, order) - 1;
+	return {
+		order: order,
+		index: last_index,
+		previous: { x: 0, y: 0},
+		current: hilbert(1, order)
+	}
+}
+
+/**
  * Returns an object representing the part of a pseudo-Hilbert curve of the given order at
  * the given index.
  * @param index 

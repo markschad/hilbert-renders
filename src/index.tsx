@@ -28,23 +28,23 @@ const begin = () => {
 	const scale = 3;
 	const margin = 4;
 
-	renderHilbert(canvas, max_order, { x: margin, y: margin }, scale);
+	// renderHilbert(canvas, max_order, { x: margin, y: margin }, scale);
 
-	// let y = margin;
+	let y = margin;
 
-	// for (let order = 1; order < max_order; order++) {
+	for (let order = 1; order < max_order; order++) {
 
-	// 	let length = scale * Math.pow(2, order);
-	// 	let x = margin;
+		let length = scale * Math.pow(2, order);
+		let x = margin;
 
-	// 	while (x + length < canvas.width) {
-	// 		renderHilbert(canvas, order, { x: x, y: y}, scale);
-	// 		x += length + margin;
-	// 	}
+		while (x + length < canvas.width) {
+			renderHilbert(canvas, order, { x: x, y: y}, scale);
+			x += length + order * margin;
+		}
 
-	// 	y += length + margin;
+		y += length + margin;
 
-	// }
+	}
 
 }
 

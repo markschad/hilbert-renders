@@ -19,11 +19,13 @@ export const renderHilbert = (canvas: HTMLCanvasElement,
 	const numTracers = 2 * divisions;
 	const tracerGap = Math.floor(hilbertLength / numTracers);
 
-	let tracers: HilbertPart[] = [];
+	let tracers: HilbertPart[] = [
+		FirstHilbertPart(order)
+	];
 
 	// TODO: Tracers need to move off in both directions from each "tracerGap".
-	for (let i = 0; i < hilbertLength; i += tracerGap) {
-		tracers.push(HilbertPartAt(i, order));
+	for (let i = 0; i < hilbertLength - 1; i++) {
+		tracers.push(HilbertPartAt(i * tracerGap, order));
 	}
 
 	// Build the array of colours which smoothly transition from red to green to blue.

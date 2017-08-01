@@ -1,4 +1,3 @@
-
 const padLeft = (s: string, n: number, c: string = " "): string => {
 	return n > s.length ? padLeft(c + s, n - 1) : s;
 }
@@ -84,16 +83,66 @@ export class Hilbert {
 
 	static PointToIndex(x: number, y: number, order: number): number {
 
-		const order_prime = order - 1;
-		const max_index = Math.pow(4, order);
-		const area = Math.pow(4, order_prime);
-		const offset = Math.pow(2, order_prime);
+		const side_length = Math.pow(2, order);
+		const max_side_length = side_length - 1;
 
-		return 0;
+		console.log("{%s, %s, %s} side_length: %s", x, y, order, side_length);
+
+		if (x > max_side_length || y > max_side_length) {
+			throw "Err: x and y (" + x + "," + y + ") cannot exceed the maximum side length (" + side_length + ")";
+		}
+
+		const order_1 = [
+			[ 0, 1 ],
+			[ 3, 2 ]
+		];
+
+		if (order === 0) {
+			return 0;
+		} else if (order === 1) {
+			return order_1[x][y];
+		}
+
+		const order_prime = order - 1;
+		const max_index_prime = Math.pow(4, order_prime);
+		const half_side_length = Math.pow(2, order_prime);
+		const qx = x >= half_side_length ? 1 : 0;
+		const qy = y >= half_side_length ? 1 : 0;
+		const quadrant = order_1[qx][qy];
+		const index_offset = max_index_prime * quadrant;
+
+		console.log("{%s, %s, %s} half_side_length: %s", x, y, order, half_side_length);
+		console.log("{%s, %s, %s} qx, qy: %s, %s", x, y, order, qx, qy);
+		console.log("{%s, %s, %s} quadrant: %s", x, y, order, quadrant);
+		console.log("{%s, %s, %s} index_offset: %s", x, y, order, index_offset);
+
+		switch (quadrant) {
+
+			case 0: return Hilbert.PointToIndex(
+				y, 
+				x, 
+				order_prime);
+
+			case 1: return index_offset + Hilbert.PointToIndex(
+				x, 
+				y - half_side_length,
+				order_prime);
+
+			case 2: return 2 * index_offset + Hilbert.PointToIndex(
+				x - half_side_length,
+				y - half_side_length,
+				order_prime);
+
+			case 3: return 3 * index_offset + Hilbert.PointToIndex(
+				y - 1,
+				x - half_side_length,
+				order_prime);
+
+		}
+
+		throw "Err: something has gone terribly wrong.";
 
 	}
-
-
 
 }
 

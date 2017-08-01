@@ -97,13 +97,14 @@ var begin = function () {
     var max_order = Number(getParameterByName("order")) || 6;
     var scale = 3;
     var margin = 4;
+    // renderHilbert(canvas, max_order, { x: margin, y: margin }, scale);
     var y = margin;
     for (var order = 1; order < max_order; order++) {
         var length_1 = scale * Math.pow(2, order);
         var x = margin;
         while (x + length_1 < canvas.width) {
             render_poly_1.renderHilbert(canvas, order, { x: x, y: y }, scale);
-            x += length_1 + margin;
+            x += length_1 + order * margin;
         }
         y += length_1 + margin;
     }
@@ -153,9 +154,12 @@ exports.renderHilbert = function (canvas, order, offset, scale, divisions) {
     var hilbertLength = Math.pow(4, order);
     var numTracers = 2 * divisions;
     var tracerGap = Math.floor(hilbertLength / numTracers);
-    var tracers = [];
-    for (var i = 0; i < hilbertLength; i += tracerGap) {
-        tracers.push(hilbert_fractal_1.HilbertPartAt(i, order));
+    var tracers = [
+        hilbert_fractal_1.FirstHilbertPart(order)
+    ];
+    // TODO: Tracers need to move off in both directions from each "tracerGap".
+    for (var i = 0; i < hilbertLength - 1; i++) {
+        tracers.push(hilbert_fractal_1.HilbertPartAt(i * tracerGap, order));
     }
     // Build the array of colours which smoothly transition from red to green to blue.
     var colourMap = gradient_1.gradient([
@@ -249,6 +253,19 @@ exports.FirstHilbertPart = function (order) {
     return {
         order: order,
         index: 1,
+        previous: { x: 0, y: 0 },
+        current: hilbert_1.hilbert(1, order)
+    };
+};
+/**
+ * Returns an object representing the last part of a pseudo-Hilbert curve of the given order.
+ * @param order The order of the desired pseudo-Hilbert curve.
+ */
+exports.LastHilbertPart = function (order) {
+    var last_index = Math.pow(4, order) - 1;
+    return {
+        order: order,
+        index: last_index,
         previous: { x: 0, y: 0 },
         current: hilbert_1.hilbert(1, order)
     };
@@ -352,11 +369,40 @@ var Hilbert = (function () {
         return exports.hilbert(index, order);
     };
     Hilbert.PointToIndex = function (x, y, order) {
+        var side_length = Math.pow(2, order);
+        var max_side_length = side_length - 1;
+        console.log("{%s, %s, %s} side_length: %s", x, y, order, side_length);
+        if (x > max_side_length || y > max_side_length) {
+            throw "Err: x and y (" + x + "," + y + ") cannot exceed the maximum side length (" + side_length + ")";
+        }
+        var order_1 = [
+            [0, 1],
+            [3, 2]
+        ];
+        if (order === 0) {
+            return 0;
+        }
+        else if (order === 1) {
+            return order_1[x][y];
+        }
         var order_prime = order - 1;
-        var max_index = Math.pow(4, order);
-        var area = Math.pow(4, order_prime);
-        var offset = Math.pow(2, order_prime);
-        return 0;
+        var max_index_prime = Math.pow(4, order_prime);
+        var half_side_length = Math.pow(2, order_prime);
+        var qx = x >= half_side_length ? 1 : 0;
+        var qy = y >= half_side_length ? 1 : 0;
+        var quadrant = order_1[qx][qy];
+        var index_offset = max_index_prime * quadrant;
+        console.log("{%s, %s, %s} half_side_length: %s", x, y, order, half_side_length);
+        console.log("{%s, %s, %s} qx, qy: %s, %s", x, y, order, qx, qy);
+        console.log("{%s, %s, %s} quadrant: %s", x, y, order, quadrant);
+        console.log("{%s, %s, %s} index_offset: %s", x, y, order, index_offset);
+        switch (quadrant) {
+            case 0: return Hilbert.PointToIndex(y, x, order_prime);
+            case 1: return index_offset + Hilbert.PointToIndex(x, y - half_side_length, order_prime);
+            case 2: return 2 * index_offset + Hilbert.PointToIndex(x - half_side_length, y - half_side_length, order_prime);
+            case 3: return 3 * index_offset + Hilbert.PointToIndex(y - 1, x - half_side_length, order_prime);
+        }
+        throw "Err: something has gone terribly wrong.";
     };
     return Hilbert;
 }());
