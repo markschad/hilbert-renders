@@ -5,6 +5,9 @@ import {
 import { gradient } from "../gradient";
 
 
+const STROKE_WIDTH = 3;
+
+
 interface Point { x: number, y: number };
 
 export const renderHilbert = (canvas: HTMLCanvasElement, 
@@ -39,7 +42,7 @@ export const renderHilbert = (canvas: HTMLCanvasElement,
 			Math.floor(255 * colour.g) + ", " +
 			Math.floor(255 * colour.b) + ")";
 		ctx.strokeStyle = colourStr;
-		ctx.lineWidth = 2;
+		ctx.lineWidth = STROKE_WIDTH;
 		ctx.stroke();
 
 		// Retrieve the next part.
