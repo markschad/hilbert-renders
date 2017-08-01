@@ -32,7 +32,7 @@ const begin = () => {
 
 	let y = margin;
 
-	for (let order = 1; order < max_order; order++) {
+	for (let order = 1; order <= max_order; order++) {
 
 		let length = scale * Math.pow(2, order);
 		let x = margin;

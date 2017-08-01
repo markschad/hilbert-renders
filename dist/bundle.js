@@ -99,7 +99,7 @@ var begin = function () {
     var margin = 4;
     // renderHilbert(canvas, max_order, { x: margin, y: margin }, scale);
     var y = margin;
-    for (var order = 1; order < max_order; order++) {
+    for (var order = 1; order <= max_order; order++) {
         var length_1 = scale * Math.pow(2, order);
         var x = margin;
         while (x + length_1 < canvas.width) {
