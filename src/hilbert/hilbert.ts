@@ -5,14 +5,8 @@ const padLeft = (s: string, n: number, c: string = " "): string => {
 
 export const hilbert = (index: number, order: number): { x: number, y: number } => {
 
-	// console.log("{"+index+","+order+"} index: "+index);
-	// console.log("{"+index+","+order+"} order: "+order);
-
 	const area = Math.pow(4, order);
 	const max_index = area - 1;
-
-	// console.log("{"+index+","+order+"} area: "+area);
-	// console.log("{"+index+","+order+"} max_index: "+max_index);
 
 	if (index > max_index) {
 		throw "Err: index (" + index + ") must be less than the maximum index (" + max_index + ") of an order " + order + " cruve."
@@ -36,16 +30,7 @@ export const hilbert = (index: number, order: number): { x: number, y: number } 
 	const index_prime = index % area_prime;
 	const quadrant = Math.floor(index / area_prime);
 
-	// console.log("{"+index+","+order+"} order_prime: "+order_prime);
-	// console.log("{"+index+","+order+"} offset: "+offset);
-	// console.log("{"+index+","+order+"} area_prime: "+area_prime);
-	// console.log("{"+index+","+order+"} index_prime: "+index_prime);
-	// console.log("{"+index+","+order+"} quadrant: "+quadrant);
-
 	const hilbert_prime = hilbert(index_prime, order_prime);
-
-	// console.log("{"+index+","+order+"} hilbert_prime: (" + 
-	// 	hilbert_prime.x + "," + hilbert_prime.y + ")");
 	
 	switch (quadrant) {
 		case 0: return {

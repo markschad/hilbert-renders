@@ -13,27 +13,49 @@ interface Point { x: number, y: number };
 export const renderHilbert = (canvas: HTMLCanvasElement,
 	order: number, offset: Point, scale: number, divisions: number = 2) => {
 
+	// console.log("order: %s", order);
+	// console.log("divisions: %s", divisions);
+
 	const ctx = canvas.getContext("2d");
 
 	const hilbertLength = Math.pow(4, order);
 	const numTracers = 2 * divisions;
-	const tracerGap = Math.floor(hilbertLength / numTracers);
+	const tracerGap = 2 * Math.floor(hilbertLength / numTracers);
+	
+	// console.log("hilbertLength: %s", hilbertLength);
+	// console.log("numtracers: %s", numTracers);
+	// console.log("tracerGap: %s", tracerGap);
 
 	let tracers: HilbertPart[] = [
 		FirstHilbertPart(order)
 	];
 
 	// TODO: Tracers need to move off in both directions from each "tracerGap".
-	for (let i = 0; i < hilbertLength - 1; i++) {
-		tracers.push(HilbertPartAt(i * tracerGap, order));
+	const lastTracerIndex = numTracers - 1;
+	let len: number;
+	let pos = 0;
+	while(tracers.length < numTracers) {
+		pos += tracerGap;
+		// console.log("len: %s", len);
+		// console.log("push index: %s", pos - 1);
+		tracers.push(HilbertPartAt(pos - 1, order));
+		if (tracers.length < numTracers) {
+			// console.log("push opposite: %s", pos);
+			tracers.push(HilbertPartAt(pos, order));
+		}
 	}
 
+	// console.log("lastTracerIndex %s", lastTracerIndex);
+	// console.dir(tracers);
+
 	// Build the array of colours which smoothly transition from red to green to blue.
-	let colourMap = gradient([
-		{ r: 1, g: 0, b: 0 },
-		{ r: 0, g: 1, b: 0 },
-		{ r: 0, g: 0, b: 1 }
-	], Math.pow(4, order));
+	let stops = [];
+	for (let i = 0; i < numTracers; i++) {
+		stops.push({ r: 1, g: 0, b: 0 });
+		stops.push({ r: 0, g: 1, b: 0 });
+		stops.push({ r: 0, g: 0, b: 1 });
+	}
+	let colourMap = gradient(stops, Math.pow(4, order));
 
 	const _render = () => {
 

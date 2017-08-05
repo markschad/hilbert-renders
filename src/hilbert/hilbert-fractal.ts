@@ -77,7 +77,7 @@ export const LastHilbertPart = (order: number) => {
 	return {
 		order: order,
 		index: last_index,
-		previous: { x: 0, y: 0},
+		previous: { x: 0, y: 0 },
 		current: hilbert(1, order)
 	}
 }
@@ -93,7 +93,7 @@ export const HilbertPartAt = (index: number, order: number) => {
 	if (index === 0) {
 		return FirstHilbertPart(order);
 	} else if (index > max_index) {
-		throw "Err: index (" + index + ") exceeds maximum for curve of this order. (" + order + ")";
+		throw "Err: index (" + index + ") exceeds maximum (" + max_index + ") for curve of this order. (" + order + ")";
 	}
 	return {
 		order: order,

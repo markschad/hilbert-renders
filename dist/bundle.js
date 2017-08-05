@@ -79,7 +79,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
 var ReactDOM = __webpack_require__(2);
 var Universe_1 = __webpack_require__(3);
-var render_1 = __webpack_require__(4);
+var render_poly_1 = __webpack_require__(4);
 var getParameterByName = function (name) {
     var url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");
@@ -97,18 +97,20 @@ var begin = function () {
     var max_order = Number(getParameterByName("order")) || 6;
     var scale = Number(getParameterByName("scale")) || 4;
     var margin = Number(getParameterByName("margin")) || 4;
-    var max_margin = max_order * margin;
-    // renderHilbert(canvas, max_order, { x: margin, y: margin }, scale);
-    var y = margin;
-    for (var order = 1; order <= max_order; order++) {
-        var length_1 = scale * Math.pow(2, order);
-        var x = margin;
-        while (x + length_1 < canvas.width) {
-            render_1.renderHilbert(canvas, order, { x: x, y: y }, scale);
-            x += length_1 + max_margin / order;
-        }
-        y += length_1 + margin;
-    }
+    var divisions = Number(getParameterByName("div")) || 2;
+    render_poly_1.renderHilbert(canvas, max_order, { x: margin, y: margin }, scale, divisions);
+    // const max_margin = max_order * margin;
+    // // renderHilbert(canvas, max_order, { x: margin, y: margin }, scale);
+    // let y = margin;
+    // for (let order = 1; order <= max_order; order++) {
+    // 	let length = scale * Math.pow(2, order);
+    // 	let x = margin;
+    // 	while (x + length < canvas.width) {
+    // 		renderHilbert(canvas, order, { x: x, y: y}, scale);
+    // 		x += length + scale; //max_margin / order;
+    // 	}
+    // 	y += length + scale; // margin;
+    // }
 };
 // Inject the universe.
 ReactDOM.render(React.createElement(Universe_1.Universe, null), document.getElementById("container"));
@@ -148,39 +150,70 @@ exports.Universe = function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var hilbert_fractal_1 = __webpack_require__(5);
 var gradient_1 = __webpack_require__(7);
-var STROKE_WIDTH = 3;
 ;
-exports.renderHilbert = function (canvas, order, offset, scale) {
+exports.renderHilbert = function (canvas, order, offset, scale, divisions) {
+    // console.log("order: %s", order);
+    // console.log("divisions: %s", divisions);
+    if (divisions === void 0) { divisions = 2; }
     var ctx = canvas.getContext("2d");
-    var h = hilbert_fractal_1.FirstHilbertPart(order);
+    var hilbertLength = Math.pow(4, order);
+    var numTracers = 2 * divisions;
+    var tracerGap = 2 * Math.floor(hilbertLength / numTracers);
+    // console.log("hilbertLength: %s", hilbertLength);
+    // console.log("numtracers: %s", numTracers);
+    // console.log("tracerGap: %s", tracerGap);
+    var tracers = [
+        hilbert_fractal_1.FirstHilbertPart(order)
+    ];
+    // TODO: Tracers need to move off in both directions from each "tracerGap".
+    var lastTracerIndex = numTracers - 1;
+    var len;
+    var pos = 0;
+    while (tracers.length < numTracers) {
+        pos += tracerGap;
+        // console.log("len: %s", len);
+        // console.log("push index: %s", pos - 1);
+        tracers.push(hilbert_fractal_1.HilbertPartAt(pos - 1, order));
+        if (tracers.length < numTracers) {
+            // console.log("push opposite: %s", pos);
+            tracers.push(hilbert_fractal_1.HilbertPartAt(pos, order));
+        }
+    }
+    // console.log("lastTracerIndex %s", lastTracerIndex);
+    // console.dir(tracers);
     // Build the array of colours which smoothly transition from red to green to blue.
-    var colourMap = gradient_1.gradient([
-        { r: 1, g: 0, b: 0 },
-        { r: 0, g: 1, b: 0 },
-        { r: 0, g: 0, b: 1 }
-    ], Math.pow(4, order));
+    var stops = [];
+    for (var i = 0; i < numTracers; i++) {
+        stops.push({ r: 1, g: 0, b: 0 });
+        stops.push({ r: 0, g: 1, b: 0 });
+        stops.push({ r: 0, g: 0, b: 1 });
+    }
+    var colourMap = gradient_1.gradient(stops, Math.pow(4, order));
     var _render = function () {
-        // Set the line path.
-        ctx.beginPath();
-        ctx.moveTo(offset.x + h.previous.x * scale, offset.y + h.previous.y * scale);
-        ctx.lineTo(offset.x + h.current.x * scale, offset.y + h.current.y * scale);
-        // Set the line colour.
-        var colour = colourMap[h.index];
-        // let colourStr = "#" +
-        // 	Math.floor(255 * colour.r).toString(16) +
-        // 	Math.floor(255 * colour.g).toString(16) +
-        // 	Math.floor(255 * colour.b).toString(16);		
-        var colourStr = "rgb(" +
-            Math.floor(255 * colour.r) + ", " +
-            Math.floor(255 * colour.g) + ", " +
-            Math.floor(255 * colour.b) + ")";
-        ctx.strokeStyle = colourStr;
-        ctx.lineWidth = STROKE_WIDTH;
-        ctx.stroke();
-        // Retrieve the next part.
-        h = hilbert_fractal_1.NextHilbertPart(h);
-        if (h) {
-            // And draw it in the next frame if there is another part.
+        if (tracers[0].index < tracerGap) {
+            for (var i = 0; i < numTracers; i++) {
+                var h = tracers[i];
+                // Set the line path.
+                ctx.beginPath();
+                ctx.moveTo(offset.x + h.previous.x * scale, offset.y + h.previous.y * scale);
+                ctx.lineTo(offset.x + h.current.x * scale, offset.y + h.current.y * scale);
+                // Set the line colour.
+                var colour = colourMap[h.index];
+                var colourStr = "rgb(" +
+                    Math.floor(255 * colour.r) + ", " +
+                    Math.floor(255 * colour.g) + ", " +
+                    Math.floor(255 * colour.b) + ")";
+                ctx.strokeStyle = colourStr;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                // If this tracer is moving forward.
+                if (i % 2 === 0) {
+                    tracers[i] = hilbert_fractal_1.NextHilbertPart(h);
+                }
+                else {
+                    tracers[i] = hilbert_fractal_1.PreviousHilbertPart(h);
+                }
+            }
             window.requestAnimationFrame(_render);
         }
     };
@@ -271,7 +304,7 @@ exports.HilbertPartAt = function (index, order) {
         return exports.FirstHilbertPart(order);
     }
     else if (index > max_index) {
-        throw "Err: index (" + index + ") exceeds maximum for curve of this order. (" + order + ")";
+        throw "Err: index (" + index + ") exceeds maximum (" + max_index + ") for curve of this order. (" + order + ")";
     }
     return {
         order: order,
@@ -294,12 +327,8 @@ var padLeft = function (s, n, c) {
     return n > s.length ? padLeft(c + s, n - 1) : s;
 };
 exports.hilbert = function (index, order) {
-    // console.log("{"+index+","+order+"} index: "+index);
-    // console.log("{"+index+","+order+"} order: "+order);
     var area = Math.pow(4, order);
     var max_index = area - 1;
-    // console.log("{"+index+","+order+"} area: "+area);
-    // console.log("{"+index+","+order+"} max_index: "+max_index);
     if (index > max_index) {
         throw "Err: index (" + index + ") must be less than the maximum index (" + max_index + ") of an order " + order + " cruve.";
     }
@@ -320,14 +349,7 @@ exports.hilbert = function (index, order) {
     var area_prime = Math.pow(4, order_prime);
     var index_prime = index % area_prime;
     var quadrant = Math.floor(index / area_prime);
-    // console.log("{"+index+","+order+"} order_prime: "+order_prime);
-    // console.log("{"+index+","+order+"} offset: "+offset);
-    // console.log("{"+index+","+order+"} area_prime: "+area_prime);
-    // console.log("{"+index+","+order+"} index_prime: "+index_prime);
-    // console.log("{"+index+","+order+"} quadrant: "+quadrant);
     var hilbert_prime = exports.hilbert(index_prime, order_prime);
-    // console.log("{"+index+","+order+"} hilbert_prime: (" + 
-    // 	hilbert_prime.x + "," + hilbert_prime.y + ")");
     switch (quadrant) {
         case 0: return {
             x: hilbert_prime.y,
